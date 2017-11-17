@@ -1,41 +1,22 @@
+#[cfg(test)]
+#[macro_use]
 extern crate compacts;
-extern crate rocksdb;
+#[cfg(not(test))]
+extern crate compacts;
+
+extern crate linked_hash_map;
 extern crate parking_lot;
+extern crate rocksdb;
 
-mod repr;
+pub mod cache;
 
-use std::collections::BTreeMap;
-use std::ops;
-use parking_lot::Mutex;
-use self::repr::Repr;
+mod store;
+mod index;
+#[cfg(test)]
+mod tests;
 
-/// Table<T>
-#[derive(Debug)]
-pub struct Table<T> {
-    table: Mutex<BTreeMap<T, Repr<T>>>,
-}
+pub use compacts::{bits, ReadFrom, WriteTo};
+pub use store::{Seek, Store};
+pub use index::{Index, SharedIndex};
 
-impl<T> Table<T>
-where
-    T: Ord,
-{
-    pub fn new() -> Self {
-        Table {
-            table: Mutex::new(BTreeMap::new()),
-        }
-    }
-}
-
-// static T: &bool = &true;
-// static F: &bool = &false;
-
-// impl<T> ops::Index<T> for Table<T>
-// where
-//     T: Ord,
-// {
-//     type Output = Repr<T>;
-//     fn index(&self, t: T) -> &Self::Output {
-//         let tab = self.table.lock();
-//         &tab[&t]
-//     }
-// }
+pub type Bytes = Vec<u8>;

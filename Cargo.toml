@@ -5,11 +5,15 @@ authors = ["Kohei Watanabe <xbeef29@gmail.com>"]
 readme  = "README.md"
 license = "Unlicense/MIT"
 repository  = "https://github.com/feb29/segment"
-keywords    = ["bit", "matrix"]
+keywords    = ["segment"]
 categories  = []
 description = ""
 
 [dependencies]
-compacts = "0.6"
-parking_lot = "0.4"
-rocksdb = { git = "https://github.com/pingcap/rust-rocksdb.git" }
+parking_lot = "0.5"
+[dependencies.compacts]
+version = "0.6"
+[dependencies.rocksdb]
+git = "https://github.com/pingcap/rust-rocksdb.git"
+[dependencies.linked-hash-map]
+git = "https://github.com/feb29/linked-hash-map.git"
