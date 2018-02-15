@@ -1,6 +1,6 @@
 use std::io;
 use std::path::Path;
-use compacts::{bits, ReadFrom, WriteTo};
+use compacts::bits;
 use rocksdb::{self, Writable};
 
 #[derive(Debug)]
@@ -50,8 +50,7 @@ impl Store {
         if let Some(db_vec) = opt {
             // from `rocksdb::DBVector` to `Vec<u8>`
             let mut vec = db_vec.to_vec();
-            let mut set = bits::Set::new();
-            set.read_from(&mut io::Cursor::new(vec))?;
+            let set = bits::Set::read_from(&mut io::Cursor::new(vec))?;
             Ok(Some(set))
         } else {
             Ok(None)
@@ -86,9 +85,8 @@ impl<'a> Seek<'a> {
         if iter.seek(seek_key) {
             let key = iter.key();
             let val = iter.value();
-            let mut bits = bits::Set::new();
-            bits.read_from(&mut io::Cursor::new(val))?;
-            Ok(Some((key.to_vec(), bits)))
+            let set = bits::Set::read_from(&mut io::Cursor::new(val))?;
+            Ok(Some((key.to_vec(), set)))
         } else {
             Ok(None)
         }
@@ -103,9 +101,8 @@ impl<'a> Seek<'a> {
         if iter.seek_for_prev(seek_key) {
             let key = iter.key();
             let val = iter.value();
-            let mut bits = bits::Set::new();
-            bits.read_from(&mut io::Cursor::new(val))?;
-            Ok(Some((key.to_vec(), bits)))
+            let set = bits::Set::read_from(&mut io::Cursor::new(val))?;
+            Ok(Some((key.to_vec(), set)))
         } else {
             Ok(None)
         }

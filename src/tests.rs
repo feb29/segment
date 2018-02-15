@@ -35,7 +35,7 @@ fn bucket_ops() {
         let mut got_x = index.get("1").unwrap().unwrap();
 
         assert!(Rc::strong_count(&got_a) == 3); // cache, got_a and got_x
-        assert!(Rc::make_mut(&mut got_x).insert(42));
+        assert!(!Rc::make_mut(&mut got_x).insert(42));
         assert!(Rc::strong_count(&got_a) == 2); // Rc::make_mut
         assert!(Rc::make_mut(&mut got_x).remove(42));
         assert!(Rc::strong_count(&got_a) == 2);
@@ -51,12 +51,12 @@ fn bucket_ops() {
 
         let mut got_y = index.get("3").unwrap().unwrap();
         let got_d = index.get("3").unwrap().unwrap(); // expire key('2')
-        assert!(Rc::make_mut(&mut got_y).insert(10));
+        assert!(!Rc::make_mut(&mut got_y).insert(10));
         assert!(Rc::strong_count(&got_c) == 1); // got_c
         assert!(Rc::strong_count(&got_d) == 2); // cache and got_d, view_2 is vacant
 
         index.put("3", bitset![10000]).unwrap();
-        assert!(!got_d.contains(10000));
+        assert!(!got_d.get(10000));
         assert!(Rc::strong_count(&got_d) == 1); // got_d, cache expired old ptr
     }
 
